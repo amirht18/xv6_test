@@ -182,6 +182,8 @@ UPROGS=\
 	_wc\
 	_zombie\
 	_setPriority\
+	_prioritySchedTest\
+	_status\
 
 fs.img: mkfs README $(UPROGS)
 	./mkfs fs.img README $(UPROGS)
@@ -255,6 +257,8 @@ EXTRA=\
 	README dot-bochsrc *.pl toc.* runoff runoff1 runoff.list\
 	.gdbinit.tmpl gdbutil\
 	setPriority.c\
+	prioritySchedTest.c\
+	status.c\
 
 dist:
 	rm -rf dist

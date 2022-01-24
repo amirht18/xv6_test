@@ -96,8 +96,30 @@ sys_setPriority(void)
   int pid, pty;
   if(argint(0, &pid) < 0)
     return -1;
-  if(argint(1, &pty) < 1 )
+  if(argint(1, &pty) < 0 )
     return -1;
 
   return setPriority(pid, pty);
+}
+
+int
+sys_tmeasure_wait(void)
+{
+  int *runningT;
+  int *readyT;
+  int *sleepingT;
+
+  if (argptr(0, (char**)&readyT, sizeof(int)) < 0)
+    return -1;
+  if (argptr(1, (char**)&runningT, sizeof(int)) < 0)
+    return -1;
+  if (argptr(2, (char**)&sleepingT, sizeof(int)) < 0)
+    return -1;
+  return tmeasure_wait(runningT, readyT, sleepingT);
+}
+
+int
+sys_status(void)
+{
+  return status();
 }

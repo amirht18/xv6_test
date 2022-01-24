@@ -120,7 +120,9 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int             setPriority(int, int);
+int             setPriority(int pid, int priority);
+int             tmeasure_wait(int*, int*, int*);
+int             status(void);
 
 
 // swtch.S

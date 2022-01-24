@@ -23,7 +23,9 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-int setPriority(int, int);
+int setPriority(int pid, int priority);
+int tmeasure_wait(int *runningTime, int *readyTime, int *sleepingTime);
+int status(void);
 
 // ulib.c
 int stat(const char*, struct stat*);

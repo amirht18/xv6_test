@@ -564,3 +564,81 @@ setPriority(int pid, int priority)
   return pid;
 }
 
+int
+tmeasure_wait(int *runningTime, int *readyTime, int *sleepingTime)
+{
+  struct proc *p;
+  int havekids, pid;
+  struct proc *curproc = myproc();
+  
+  acquire(&ptable.lock);
+  for(;;){
+    // Scan through table looking for exited children.
+    havekids = 0;
+    for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+      if(p->parent != curproc)
+        continue;
+      //if (p->threads < 0)
+      // continue;
+      havekids = 1;
+      if(p->state == ZOMBIE){
+        // Found one.
+
+        *readyTime = (p->terminationTime - p->creationTime) - p->runningTime - p->sleepingTime;
+        *runningTime = p->runningTime;
+        *sleepingTime = p->sleepingTime;
+
+        pid = p->pid;
+        kfree(p->kstack);
+        p->kstack = 0;
+
+        //if (check_pgdir_share(p))
+        freevm(p->pgdir);
+        
+        p->pid = 0;
+        p->parent = 0;
+        p->name[0] = 0;
+        p->killed = 0;
+        p->state = UNUSED;
+
+        //p->stackTop = -1;
+        //p->pgdir = 0;
+        //p->threads = -1;
+
+        release(&ptable.lock);
+        return pid;
+      }
+    }
+
+    // No point waiting if we don't have any children.
+    if(!havekids || curproc->killed){
+      release(&ptable.lock);
+      return -1;
+    }
+
+    // Wait for children to exit. (See wakeup1 call in proc_exit.)
+    sleep(curproc, &ptable.lock); //DOC: wait-sleep
+  }
+}
+
+int
+status()
+{
+struct proc *p;
+//Enables interrupts on this processor.
+sti();
+
+//Loop over process table looking for process with pid.
+acquire(&ptable.lock);
+cprintf("name \t pid \t state \t priority \n");
+for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
+  if(p->state == SLEEPING)
+	  cprintf("%s \t %d \t SLEEPING \t %d \n ", p->name,p->pid,p->priority);
+	else if(p->state == RUNNING)
+ 	  cprintf("%s \t %d \t RUNNING \t %d \n ", p->name,p->pid,p->priority);
+	else if(p->state == RUNNABLE)
+ 	  cprintf("%s \t %d \t RUNNABLE \t %d \n ", p->name,p->pid,p->priority);
+}
+release(&ptable.lock);
+return 22;
+}
