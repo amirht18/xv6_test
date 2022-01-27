@@ -51,16 +51,20 @@ trap(struct trapframe *tf)
     if(cpuid() == 0){
       acquire(&tickslock);
       ticks++;
+      changeTimes();
       wakeup(&ticks);
       release(&tickslock);
-
+/*
       if (myproc() != 0) {
         if (myproc()->state == RUNNING)
           myproc()->runningTime++;
         else if (myproc()->state == SLEEPING)
           myproc()->sleepingTime++;
+        else if (myproc()->state == RUNNABLE)
+          myproc()->readyTime++;
       }
-      
+*/
+
     }
     lapiceoi();
     break;
@@ -107,12 +111,42 @@ trap(struct trapframe *tf)
   // until it gets to the regular system call return.)
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)
     exit();
-
-  // Force process to give up CPU on clock tick.
-  // If interrupts were on while locks held, would need to check nlock.
-  if(myproc() && myproc()->state == RUNNING &&
-     tf->trapno == T_IRQ0+IRQ_TIMER)
-    yield();
+  
+  if (policy == 1 || policy == 2) {
+    // Force process to give up CPU on clock tick.
+    // If interrupts were on while locks held, would need to check nlock.
+    if(myproc() && myproc()->state == RUNNING &&
+      tf->trapno == T_IRQ0+IRQ_TIMER){
+      int timeLeft = myproc()->remainingTicks;
+      if (timeLeft > 1)
+       myproc()->remainingTicks = timeLeft - 1;
+      else
+       yield();
+    }
+  }
+  else if (policy == 3) {
+    if(myproc() && myproc()->state == RUNNING &&
+      tf->trapno == T_IRQ0+IRQ_TIMER) {
+      if (isHigherQueueAvailable())
+        yield();
+      else {
+        int timeLeft = myproc()->remainingTicks;
+        if (timeLeft > 1)
+          myproc()->remainingTicks = timeLeft - 1;
+        else {
+          //cprintf("priority %d",myproc()->priority,);
+          yield();
+        }
+      }
+    }
+  }
+  else if (policy == 0) {
+    // Force process to give up CPU on clock tick.
+    // If interrupts were on while locks held, would need to check nlock.
+    if(myproc() && myproc()->state == RUNNING &&
+      tf->trapno == T_IRQ0+IRQ_TIMER)
+        yield();
+  }
 
   // Check if the process has been killed since we yielded
   if(myproc() && myproc()->killed && (tf->cs&3) == DPL_USER)

@@ -20,6 +20,14 @@
 #define SYS_link   19
 #define SYS_mkdir  20
 #define SYS_close  21
-#define SYS_setPriority  22
-#define SYS_tmeasure_wait 23
-#define SYS_status 24
+#define SYS_getProcCount 22
+#define SYS_getReadCount 23
+#define SYS_thread_create 24
+#define SYS_thread_wait 25
+#define SYS_tmeasure_wait 26
+#define SYS_patternPrint 27
+#define SYS_changePolicy 28
+#define SYS_changeTimes 29
+#define SYS_setPriority 30
+#define SYS_withPriPrint 31
+#define SYS_isHigherQueueAvailable 32

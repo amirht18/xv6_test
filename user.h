@@ -23,9 +23,17 @@ int getpid(void);
 char* sbrk(int);
 int sleep(int);
 int uptime(void);
-int setPriority(int pid, int priority);
-int tmeasure_wait(int *runningTime, int *readyTime, int *sleepingTime);
-int status(void);
+int getProcCount(void);
+int getReadCount(void);
+int thread_create(void*);
+int thread_wait(void);
+int tmeasure_wait(int *runningTime, int *readyTime, int *sleepingTime, int *pri);
+int patternPrint(int);
+int changePolicy(int);
+int changeTimes(void);
+int setPriority(int);
+int withPriPrint(int);
+int isHigherQueueAvailable(void);
 
 // ulib.c
 int stat(const char*, struct stat*);
@@ -40,3 +48,4 @@ void* memset(void*, int, uint);
 void* malloc(uint);
 void free(void*);
 int atoi(const char*);
+int thread_creator(void(*)(void*), void*);

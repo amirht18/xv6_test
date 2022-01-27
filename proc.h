@@ -13,6 +13,8 @@ struct cpu {
 extern struct cpu cpus[NCPU];
 extern int ncpu;
 
+int policy;
+
 //PAGEBREAK: 17
 // Saved registers for kernel context switches.
 // Don't need to save all the segment registers (%cs, etc),
@@ -49,12 +51,15 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
-  int priority;
+  int threads;
+  int stackTop;
+  int remainingTicks;
   int creationTime;
   int terminationTime;
   int runningTime;
   int readyTime;
   int sleepingTime;
+  int priority;
 };
 
 // Process memory is laid out contiguously, low addresses first:

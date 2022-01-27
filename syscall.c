@@ -103,9 +103,17 @@ extern int sys_unlink(void);
 extern int sys_wait(void);
 extern int sys_write(void);
 extern int sys_uptime(void);
-extern int sys_setPriority(void);
+extern int sys_getProcCount(void);
+extern int sys_getReadCount(void);
+extern int sys_thread_create(void);
+extern int sys_thread_wait(void);
 extern int sys_tmeasure_wait(void);
-extern int sys_status(void);
+extern int sys_patternPrint(void);
+extern int sys_changePolicy(void);
+extern int sys_changeTimes(void);
+extern int sys_setPriority(void);
+extern int sys_withPriPrint(void);
+extern int sys_isHigherQueueAvailable(void);
 
 static int (*syscalls[])(void) = {
 [SYS_fork]    sys_fork,
@@ -129,10 +137,17 @@ static int (*syscalls[])(void) = {
 [SYS_link]    sys_link,
 [SYS_mkdir]   sys_mkdir,
 [SYS_close]   sys_close,
+[SYS_getProcCount]   sys_getProcCount,
+[SYS_getReadCount]   sys_getReadCount,
+[SYS_thread_create]   sys_thread_create,
+[SYS_thread_wait]   sys_thread_wait,
+[SYS_tmeasure_wait]   sys_tmeasure_wait,
+[SYS_patternPrint]   sys_patternPrint,
+[SYS_changePolicy]   sys_changePolicy,
+[SYS_changeTimes]    sys_changeTimes,
 [SYS_setPriority]    sys_setPriority,
-[SYS_tmeasure_wait] sys_tmeasure_wait,
-[SYS_status]   sys_status,
-
+[SYS_withPriPrint]   sys_withPriPrint,
+[SYS_isHigherQueueAvailable]   sys_isHigherQueueAvailable,
 };
 
 void

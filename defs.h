@@ -10,6 +10,9 @@ struct sleeplock;
 struct stat;
 struct superblock;
 
+// *******
+extern struct spinlock threads;
+
 // bio.c
 void            binit(void);
 struct buf*     bread(uint, uint);
@@ -120,10 +123,17 @@ void            userinit(void);
 int             wait(void);
 void            wakeup(void*);
 void            yield(void);
-int             setPriority(int pid, int priority);
-int             tmeasure_wait(int*, int*, int*);
-int             status(void);
-
+int             getProcCount(void);
+int             getReadCount(void);
+int             thread_create(void*);
+int             thread_wait(void);
+int             tmeasure_wait(int*, int*, int*, int*);
+void            patternPrint(int);
+void            changePolicy(int);
+void            changeTimes(void);
+void            setPriority(int);
+int             withPriPrint(int);
+int             isHigherQueueAvailable(void);
 
 // swtch.S
 void            swtch(struct context**, struct context*);
